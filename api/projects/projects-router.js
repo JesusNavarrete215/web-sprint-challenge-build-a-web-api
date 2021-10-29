@@ -31,7 +31,6 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-
 router.post("/", (req, res, next) => {
   const { name, description } = req.body;
   if (!name || !description) {
@@ -40,18 +39,62 @@ router.post("/", (req, res, next) => {
       .json({ message: "Please provide the name and description" });
   } else {
     Projects.insert(req.body)
-    .then(
-      (project) => {
+      .then((project) => {
         res.status(201).json(project);
-      }
-    )
-    .catch(next)
+      })
+      .catch(next);
   }
 });
 
+router.put("/:id", (req, res, next) => {
+  const { name, description, completed } = req.body;
+  if (!name || !description) {
+    res.status(400).json({ message: "Please provide name and description" });
+  } else if (!req.params.id) {
+    res
+      .status(404)
+      .json({ message: "The post with teh specified ID does not exist " });
+  } else {
+    Projects.update(req.params.id, req.body)
+      .then(() => {
+        return Projects.get(req.params.id);
+      })
+      .then((project) => {
+        res.json(project);
+      })
+      .catch(next);
+  }
+});
 
-router.put("/:id", (req, res) => {});
-router.delete("/:id", (req, res) => {});
-router.get("/:id/actions", (req, res) => {});
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const project = await Projects.get(req.params.id);
+    if (!project) {
+      res
+        .status(404)
+        .json({ message: "The post with the specified ID does not exist" });
+    } else {
+      await Projects.remove(req.params.id);
+      res.json(project);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/:id/actions", async (req, res) => {
+ try{
+     const project = await Projects.get(req.params.id)
+     if(!project) {
+         res.status(404).json({message: "the post with the specified ID does not exist"})
+     } else {
+         const actions = await Projects.getProjectActions(req.params.id);
+         res.json(actions)
+     }
+
+ } catch(err){
+     next(err)
+ }
+});
 
 module.exports = router;
