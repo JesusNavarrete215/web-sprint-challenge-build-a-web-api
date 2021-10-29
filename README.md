@@ -155,3 +155,4 @@ Be prepared to demonstrate your understanding of this week's concepts by answeri
 4. Understand and explain the use of Express Routers.
   - Express Routers behaves like a mini Express application. it can have its own routing and middleware, but it needs to exist inside an Express application. 
 5. Describe tooling used to manually test the correctness of an API.
+  - We can use HTTPie or Postman to check our API endpoints. Usually Postman is easy to interact with on the web browser and in the application. 
