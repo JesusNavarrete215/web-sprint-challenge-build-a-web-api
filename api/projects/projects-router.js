@@ -2,6 +2,8 @@
 const express = require("express");
 const Projects = require("./projects-model");
 const router = express.Router();
+const {projectHandleError} = require('./projects-middleware')
+
 
 router.get("/", async (req, res, next) => {
   try {
@@ -96,5 +98,7 @@ router.get("/:id/actions", async (req, res) => {
      next(err)
  }
 });
+
+router.use(projectHandleError);
 
 module.exports = router;

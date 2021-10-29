@@ -2,6 +2,7 @@
 const express = require("express");
 const Actions = require("./actions-model");
 const router = express.Router();
+const { actionHandleError } = require("./actions-middlware");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -33,11 +34,9 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   const { project_id, description, notes } = req.body;
   if (!project_id || !description || !notes) {
-    res
-      .status(400)
-      .json({
-        message: "Please provide the project ID, notes,  and description",
-      });
+    res.status(400).json({
+      message: "Please provide the project ID, notes,  and description",
+    });
   } else {
     Actions.insert(req.body)
       .then((action) => {
@@ -48,7 +47,7 @@ router.post("/", async (req, res, next) => {
 });
 router.put("/:id", (req, res, next) => {
   const { project_id, description, notes } = req.body;
-  if (!project_id || !description ) {
+  if (!project_id || !description) {
     res.status(400).json({ message: "Please provide name and description" });
   } else if (!req.params.id) {
     res
@@ -80,5 +79,7 @@ router.delete("/:id", async (req, res, next) => {
     next(err);
   }
 });
+
+router.use(actionHandleError);
 
 module.exports = router;
