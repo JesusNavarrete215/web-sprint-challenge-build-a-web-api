@@ -1,4 +1,3 @@
-
 const action = require('./actions-model')
 
 function actionHandleError(err, req, res, next){
